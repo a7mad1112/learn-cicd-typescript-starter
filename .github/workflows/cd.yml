@@ -28,7 +28,8 @@ jobs:
             - id: auth
               uses: google-github-actions/auth@v2
               with:
-                  credentials_json: ${{ secrets.GCP_CREDENTIALS }}
+                  workload_identity_provider: projects/338006434389/locations/global/workloadIdentityPools/github-pool1/providers/github-provider
+                  service_account: notely-cd-sa@notely-489123.iam.gserviceaccount.com
 
             - name: Set up Cloud SDK
               uses: google-github-actions/setup-gcloud@v3
