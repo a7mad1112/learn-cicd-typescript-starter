@@ -7,6 +7,11 @@ on:
 jobs:
   Deploy:
     runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write   # Required for Workload Identity Federation
+      contents: read
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -22,15 +27,11 @@ jobs:
       - name: Build the app
         run: npm run build
 
-      - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v2
+      - name: Authenticate to GCP via Workload Identity
+        uses: google-github-actions/auth@v1
         with:
-          project_id: notely-489123
-          service_account_key: ${{ secrets.GCP_CREDENTIALS }}
-          export_default_credentials: true
-
-      - name: Authenticate gcloud explicitly
-        run: gcloud auth activate-service-account --key-file=${{ secrets.GCP_CREDENTIALS }}
+          workload_identity_provider: projects/338006434389/locations/global/workloadIdentityPools/github-pool/providers/github-provider
+          service_account: notely-cd-sa@notely-489123.iam.gserviceaccount.com
 
       - name: Build and push Docker image
         run: |
